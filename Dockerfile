@@ -34,6 +34,7 @@ COPY . .
 RUN composer dump-autoload --optimize
 
 RUN chmod -R 777 storage
+
 RUN chmod -R 777 bootstrap/cache
 
 RUN php artisan optimize:clear

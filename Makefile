@@ -24,3 +24,4 @@ compose-down-up-ps:
 
 #### DOCKER EXEC COMMANDS
 
+#docker cp $(docker compose ps -q app):/var/www/html/vendor .

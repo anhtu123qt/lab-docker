@@ -7,8 +7,8 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ./:/var/www/html
       - /var/www/html/vendor
+      - ./:/var/www/html
 
   web:
     container_name: web
