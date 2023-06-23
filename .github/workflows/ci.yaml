@@ -37,5 +37,12 @@
         - name: Directory Permissions
           run: chmod -R 777 storage bootstrap/cache
 
-        - name: Run Unit test
+        - name: Execute tests (Unit and Feature tests) via PHPUnit
           run: php artisan test
+
+        - name: Build Docker Image
+          run: docker build -t tu1anh/laravel-app:1.1 -f ./Dockerfile .
+        - name: Login To Docker Hub
+          run: docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
+        - name: Push Docker Image
+          run: docker push tu1anh/laravel-app:1.1
