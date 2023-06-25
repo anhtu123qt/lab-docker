@@ -1,25 +1,20 @@
-FROM php:8.1.20-fpm
+FROM php:8.1.20-fpm-alpine3.18
 
-RUN apt-get update && apt-get install -y \
+RUN apk update && apk add \
     git \
-    curl libcurl4-openssl-dev \
-    libpq-dev \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    libmagick++-dev \
-    libmagickwand-dev \
-    zip \
-    unzip
+    make \
+    libmcrypt-dev \
+    openssl-dev \
+    php81-openssl \
+    php81-pdo_mysql \
+    php81-mbstring \
+    php81-pcntl \
+    php81-intl
 
-RUN docker-php-ext-install bcmath curl
-RUN docker-php-ext-install exif
-RUN docker-php-ext-install mbstring mysqli
+RUN docker-php-ext-install bcmath
+RUN docker-php-ext-install mysqli
 RUN docker-php-ext-install pcntl
-RUN docker-php-ext-install pdo_mysql pdo_pgsql pgsql
-
-RUN pecl install imagick && \
-    docker-php-ext-enable imagick
+RUN docker-php-ext-install pdo_mysql
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
