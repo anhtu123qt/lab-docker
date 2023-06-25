@@ -16,6 +16,6 @@ class ExampleTest extends TestCase
 
     public function test_1_not_equal_to_2() : void
     {
-        $this->assertNotEquals(1, 2, 'It Works');
+        $this->assertNotEquals(1, 2, 'It Worksssss');
     }
 }
