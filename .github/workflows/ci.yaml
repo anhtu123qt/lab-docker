@@ -1,22 +1,24 @@
-  name: Laravel Docker
+  name: CI workflow
 
   on:
     push:
-      branches: [ master ]
+      branches:
+        - 'master'
+      tags:
+        - 'v*'
     pull_request:
-      branches: [ master ]
-
+      branches:
+        - 'master'
   jobs:
     build:
-      runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          os: [ ubuntu-latest ]
+          php-version: [ 8.1 ]
+      runs-on: ${{ matrix.os }}
       defaults:
         run:
           working-directory: ./
-
-      strategy:
-        matrix:
-          php-version: [8.1]
-
       steps:
         - uses: actions/checkout@v3
 
@@ -40,9 +42,28 @@
         - name: Execute tests (Unit and Feature tests) via PHPUnit
           run: php artisan test
 
-        - name: Build Docker Image
-          run: docker build -t tu1anh/laravel-app:1.1 -f ./Dockerfile .
-        - name: Login To Docker Hub
-          run: docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
-        - name: Push Docker Image
-          run: docker push tu1anh/laravel-app:1.1
+        - name: Docker Meta
+          id: meta
+          uses: docker/metadata-action@v4
+          with:
+            images: |
+              tu1anh/docker-api-laravel
+            tags: |
+              type=raw,value=latest
+              type=ref,event=branch
+              type=ref,event=pr
+              type=semver,pattern={{version}}
+              type=semver,pattern={{major}}.{{minor}}
+
+        - name: Login to Docker Hub
+          uses: docker/login-action@v2
+          with:
+            username: ${{ secrets.DOCKER_HUB_USERNAME }}
+            password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        - name: Build and push
+          uses: docker/build-push-action@v4
+          with:
+            file: ./Dockerfile
+            context: .
+            push: true
+            tags: ${{ steps.meta.output.tags }}
